@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html xmlns:th="https://www.thymeleaf.org"
+      xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+
+<head>
+    <meta charset="UTF-8">
+    <script type="text/javascript" src="http://code.jquery.com/jquery-1.10.0.min.js"></script>
+    <meta charset="UTF-8">
+    <title>Shoop Cart</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- Bootstrap CSS -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <a class="navbar-brand" th:href="@{product}">Главная</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+                aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item">
+                    <p sec:authorize="hasAnyAuthority('ADMIN')"><a class="nav-link" href="/user">Пользователи</a></p>
+                </li>
+                <li class="nav-item">
+                    <p sec:authorize="hasAnyAuthority('ADMIN')"><a class="nav-link" href="/product-create">Создать
+                        товар</a></p>
+                </li>
+                <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css"
+                      rel="stylesheet"
+                      integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1"
+                      crossorigin="anonymous">
+                <li class="nav-item">
+                    <a class="nav-link">
+                        <form th:action="@{/logout}" method="post">
+                            <button type="submit" class="btn btn-dark">Выйти</button>
+                        </form>
+                    </a>
+                </li>
+
+            </ul>
+            <div class="navbar-text"></div>
+        </div>
+    </nav>
+</head>
+<body>
+<div>
+    <h2>Корзина покупак</h2>
+    </br>
+</div>
+
+<div class="row m-1">
+    <div class="col-sm-8">
+        <th:block th:each="item, status: ${cartItems}">
+            <div class="row border rounded" th:with="product =${item.product}"
+            th:id="'row'+${status.count}">
+                <div class="col-1">
+                    <div>[[${status.count}]]</div>
+                    <div>
+                        <a class="link-delete"
+                           th:rowNumber="${status.count}"
+                           th:href="@{'/cart/delete/'+${product.id}}"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-bucket-fill" viewBox="0 0 16 16">
+                             <path d="M2.522 5H2a.5.5 0 0 0-.494.574l1.372 9.149A1.5 1.5 0 0 0 4.36 16h7.278a1.5 1.5 0 0 0 1.483-1.277l1.373-9.149A.5.5 0 0 0 14 5h-.522A5.5 5.5 0 0 0 2.522 5zm1.005 0a4.5 4.5 0 0 1 8.945 0H3.527z"/>
+                             </svg>
+                        </a>
+                    </div>
+                </div>
+                <div class="col-3">
+                    <td th:if="${item.product.filename}"><a th:href="@{laptop/{id}(id=${item.id})}"><img
+                            th:src="@{/img/{filename}(filename=${item.product.filename})}" th:width="180"
+                            th:height="140"></a></td>
+                </div>
+                <div class="col-6">
+                    <div>
+                        <a th:href="@{laptop/{id}(id=${item.id})}" th:title="${product.name}" target="_blank">
+                            <b>[[${product.name}]]</b>
+                        </a>
+                    </div>
+                    <div th:replace="quantity_control :: quantity_control(${item.quantity},${item.product.id})">
+                        Колличество
+                    </div>
+                    <div>
+                        <span>X</span>
+                        <span>[[${product.price}]]p</span>
+                    </div>
+                    <div>
+                        <span>=</span><h4>
+                    <span th:id="'subtotal'+${product.id}"
+                          class="productTotalItem">[[${item.totalItem}]]</span><span>р</span></h4>
+                    </div>
+                </div>
+            </div>
+            <div class="row m-1">&nbsp;</div>
+        </th:block>
+    </div>
+
+    <div class="col-sm-4" th:unless="${#lists.isEmpty(cartItems)}">
+        <span><h2>Ориентировочная сумма:</h2></span>
+
+        <div class="mt-2">
+            <span class="h3" id="totalAmount"></span>
+        </div>
+        <form th:action="@{/orders/formalized}" method="get">
+            <button type="submit" onclick="alert('Заказ оформлен!')" class="btn btn-danger p-3 mt-2">Оформить</button>
+
+        </form>
+<!--        <div class="mt-2">-->
+<!--            <button class="btn btn-danger p-3 mt-2" id="buttonCheckout">Оформить</button>-->
+
+<!--        </div>-->
+
+    </div>
+
+    <div th:if="${#lists.isEmpty(cartItems)}">
+        <h3>Добавленных продуктов нет.</h3>
+    </div>
+
+</div>
+<script type="text/javascript">
+    contextPath = "[[@{/}]]";
+
+</script>
+
+<script th:src="@{/js/shopping_cart.js}"></script>
+</body>
+
+</html>

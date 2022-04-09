@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="https://www.thymeleaf.org"
+      xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<head>
+    <meta charset="UTF-8">
+    <title>Order</title>
+</head>
+<div class="container">
+    <div th:switch="${order}">
+        <h2 th:case="null">No product found!</h2>
+        <div th:case="*">
+            <h2>Заказы</h2>
+
+            <table>
+                <thead>
+                <tr>
+
+                    <th>Номер заказа</th>
+                    <th>Имя покупателя</th>
+                    <!--                    <th>Email покупателя</th>-->
+                    <th>Наименование товара</th>
+                    <!--                    <th>Цена товара за 1 шт</th>-->
+                    <th>Id товара</th>
+                    <!--                    <th>Количество данного товара</th>-->
+                    <!--                    <th>Общая цена за весь товар</th>-->
+                    <th>Статус</th>
+
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="ord : ${order}">
+                    <td th:text="${ord.id}"></td>
+                    <td th:text="${ord.user.username}"></td>
+                    <!--                    <td th:text="${ord.user.email}"></td>-->
+                    <td th:text="${ord.product.name}"></td>
+                    <!--                    <td th:text="${ord.product.price}"></td>-->
+                    <td th:text="${ord.product.id}"></td>
+                    <!--                    <td th:text="${ord.quantity}"></td>-->
+                    <!--                    <td th:text="${ord.totalItem}"></td>-->
+                    <td th:if="${ord.formalized}">
+                        <h3 style="background-color:#42ff1d"><p>Оформлен </p>
+                    </td>
+                    <td th:unless="${ord.formalized}">
+                        <h3 style="background-color:#ffda14"><p>Ожидание</p>
+                    </td>
+
+
+                </tr>
+                </tbody>
+            </table>
+            <br>
+            <br>
+            <form th:action="@{/product}" method="get">
+                <input type="submit" value="Ввернуться на главную"/>
+            </form>
+        </div>
+    </div>
+</div>
+</body>
+</html>
